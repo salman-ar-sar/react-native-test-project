@@ -1,45 +1,30 @@
-import React, { useEffect, useState } from "react";
-import { View, StyleSheet, Text } from "react-native";
-import InputField from "../components/InputField";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import React from "react";
+import { View, StyleSheet, Text, Pressable } from "react-native";
 
-const STORAGE_KEY = "ASYNC_STORAGE_NAME";
+import { useAppDispatch, useAppSelector } from "../app/hooks";
+import { addName, removeName } from "../features/NamesList/namesSlice";
+import InputField from "../components/InputField";
 
 export default function ScrollingPage() {
-  const [name, setName] = useState("");
+  const namesList = useAppSelector((state) => state.namesList);
+  const dispatch = useAppDispatch();
 
-  async function loadName() {
-    try {
-      const name = await AsyncStorage.getItem(STORAGE_KEY);
-
-      if (name === null) return;
-
-      setName(name);
-    } catch (e) {
-      console.error("Failed to load name.");
-    }
-  }
-
-  const saveName = async (name: string) => {
-    try {
-      await AsyncStorage.setItem(STORAGE_KEY, name);
-      setName(name);
-    } catch (e) {
-      console.error("Failed to save name.");
-    }
-  };
-
-  useEffect(() => {
-    loadName();
-  }, []);
+  const handleNameAdd = (name: string) => dispatch(addName(name));
+  const handleNameRemove = (name: string) => dispatch(removeName(name));
 
   return (
     <View style={styles.container}>
       <InputField
         placeholder="Enter your name"
-        onSubmitEditing={(name) => saveName(name)}
+        onSubmitEditing={handleNameAdd}
       />
-      <Text style={styles.text}>Hello {name}!</Text>
+      {namesList.map((name, index) => (
+        <View key={index}>
+          <Pressable onPress={() => handleNameRemove(name)}>
+            <Text style={styles.text}>Hello {name}!</Text>
+          </Pressable>
+        </View>
+      ))}
     </View>
   );
 }
