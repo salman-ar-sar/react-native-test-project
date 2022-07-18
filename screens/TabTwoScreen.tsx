@@ -3,8 +3,11 @@ import { StyleSheet, TouchableOpacity } from "react-native";
 
 import EditScreenInfo from "../components/EditScreenInfo";
 import { Text, View } from "../components/Themed";
+import { RootTabScreenProps } from "../types";
 
-export default function TabTwoScreen() {
+export default function TabTwoScreen({
+  navigation,
+}: RootTabScreenProps<"TabTwo">) {
   const [clickCount, setClickCount] = useState(0);
 
   return (
@@ -25,6 +28,13 @@ export default function TabTwoScreen() {
         onLongPress={() => console.log("long pressed")}
       >
         <Text style={styles.text}>Test Button</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.button}
+        activeOpacity={0.6}
+        onPress={() => navigation.push("InputPage")}
+      >
+        <Text style={styles.text}>Go to Input page!</Text>
       </TouchableOpacity>
       <EditScreenInfo path="/screens/TabTwoScreen.tsx" />
     </View>
